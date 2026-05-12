@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
   buildPathString,
   handlePoint,
@@ -10,7 +10,6 @@ import {
   sampleCurve,
   sampleY,
 } from "./bezier";
-import styles from "./easing.module.css";
 
 const W = 1000;
 const H = 1000;
@@ -36,6 +35,44 @@ export default function Graph({ anchors, setAnchors, duration = 1500, onDuration
   const tracerRef = useRef(null);
   const trackerRef = useRef(null);
   const durationDragRef = useRef(null);
+
+  useLayoutEffect(() => {
+    const el = svgRef.current;
+    if (!el) return;
+    let raf = null;
+    const update = () => {
+      const rect = el.getBoundingClientRect();
+      const cellPx = rect.width * (W - 2 * PAD) / W / 10;
+      const originX = rect.left + rect.width * (PAD / W);
+      const originY = rect.top + rect.height * (PAD / H);
+      const mc = cellPx * 5;
+      const r = document.documentElement;
+      r.style.setProperty("--bg-cell", `${cellPx}px`);
+      r.style.setProperty("--bg-ox-major", `${((originX % mc) + mc) % mc}px`);
+      r.style.setProperty("--bg-oy-major", `${((originY % mc) + mc) % mc}px`);
+      r.style.setProperty("--bg-ox-minor", `${((originX % cellPx) + cellPx) % cellPx}px`);
+      r.style.setProperty("--bg-oy-minor", `${((originY % cellPx) + cellPx) % cellPx}px`);
+      raf = null;
+    };
+    const schedule = () => { if (!raf) raf = requestAnimationFrame(update); };
+    update();
+    let revealRaf = requestAnimationFrame(() => {
+      document.documentElement.classList.add("grid-ready");
+      revealRaf = null;
+    });
+    const ro = new ResizeObserver(schedule);
+    ro.observe(el);
+    window.addEventListener("resize", schedule, { passive: true });
+    window.addEventListener("scroll", update, { passive: true });
+    return () => {
+      if (revealRaf) cancelAnimationFrame(revealRaf);
+      if (raf) cancelAnimationFrame(raf);
+      ro.disconnect();
+      window.removeEventListener("resize", schedule);
+      window.removeEventListener("scroll", update);
+      document.documentElement.classList.remove("grid-ready");
+    };
+  }, []);
 
   const samples = useMemo(() => sampleCurve(anchors, 96), [anchors]);
   const samplesRef = useRef(samples);
@@ -197,15 +234,15 @@ export default function Graph({ anchors, setAnchors, duration = 1500, onDuration
   const dSvg = anchorsToSvgPath(anchors);
 
   return (
-    <div className={styles.graphWrapper}>
-      <div className={styles.trackerTrack}>
-        <div ref={trackerRef} className={styles.trackerDot} />
+    <div className="graphWrapper">
+      <div className="trackerTrack">
+        <div ref={trackerRef} className="trackerDot" />
       </div>
     <svg
       ref={svgRef}
       viewBox={`0 0 ${W} ${H}`}
       overflow="visible"
-      className={styles.graph}
+      className="graph"
       onPointerDown={() => setSelectedAnchor(null)}
       onPointerMove={onPointerMove}
       onPointerUp={endDrag}
@@ -214,18 +251,18 @@ export default function Graph({ anchors, setAnchors, duration = 1500, onDuration
       <Grid />
       <BoundsRect />
 
-      <path d={dSvg} className={styles.curve} fill="none" />
+      <path d={dSvg} className="curve" fill="none" />
 
       {/* Invisible thick hit area for click-to-insert */}
       <path
         d={dSvg}
-        className={styles.curveHit}
+        className="curveHit"
         fill="none"
         onClick={onCurveClick}
       />
 
       {/* Tracer dot */}
-      <circle ref={tracerRef} r={16} className={styles.tracer} />
+      <circle ref={tracerRef} r={16} className="tracer" />
 
       {/* Handle lines */}
       {anchors.map((a, i) => {
@@ -240,7 +277,7 @@ export default function Graph({ anchors, setAnchors, duration = 1500, onDuration
               y1={gyToSvg(a.y)}
               x2={gxToSvg(hp.x)}
               y2={gyToSvg(hp.y)}
-              className={sel ? `${styles.handleLine} ${styles.handleLineSelected}` : styles.handleLine}
+              className={sel ? "handleLine handleLineSelected" : "handleLine"}
             />
           );
         }
@@ -253,7 +290,7 @@ export default function Graph({ anchors, setAnchors, duration = 1500, onDuration
               y1={gyToSvg(a.y)}
               x2={gxToSvg(hp.x)}
               y2={gyToSvg(hp.y)}
-              className={sel ? `${styles.handleLine} ${styles.handleLineSelected}` : styles.handleLine}
+              className={sel ? "handleLine handleLineSelected" : "handleLine"}
             />
           );
         }
@@ -272,7 +309,7 @@ export default function Graph({ anchors, setAnchors, duration = 1500, onDuration
               cx={gxToSvg(hp.x)}
               cy={gyToSvg(hp.y)}
               r={13}
-              className={sel ? `${styles.handle} ${styles.handleSelected}` : styles.handle}
+              className={sel ? "handle handleSelected" : "handle"}
               onPointerDown={startDrag("hIn", i)}
             />
           );
@@ -285,7 +322,7 @@ export default function Graph({ anchors, setAnchors, duration = 1500, onDuration
               cx={gxToSvg(hp.x)}
               cy={gyToSvg(hp.y)}
               r={13}
-              className={sel ? `${styles.handle} ${styles.handleSelected}` : styles.handle}
+              className={sel ? "handle handleSelected" : "handle"}
               onPointerDown={startDrag("hOut", i)}
             />
           );
@@ -308,7 +345,7 @@ export default function Graph({ anchors, setAnchors, duration = 1500, onDuration
               y={cy - s}
               width={s * 2}
               height={s * 2}
-              className={styles.anchorEnd}
+              className="anchorEnd"
             />
           );
         }
@@ -318,14 +355,14 @@ export default function Graph({ anchors, setAnchors, duration = 1500, onDuration
             cx={cx}
             cy={cy}
             r={10}
-            className={sel ? `${styles.anchor} ${styles.anchorSelected}` : styles.anchor}
+            className={sel ? "anchor anchorSelected" : "anchor"}
             onPointerDown={startDrag("anchor", i)}
             onDoubleClick={removeAnchor(i)}
           />
         );
       })}
 
-      <text x={gxToSvg(0)} y={H - PAD + 46} className={styles.xAxisZero}>0</text>
+      <text x={gxToSvg(0)} y={H - PAD + 46} className="xAxisZero">0</text>
 
       {onDurationChange && (() => {
         const label = formatDuration(duration);
@@ -333,14 +370,14 @@ export default function Graph({ anchors, setAnchors, duration = 1500, onDuration
         return (
           <g
             transform={`translate(${gxToSvg(1)}, ${H - PAD + 38})`}
-            className={styles.durationBtn}
+            className="durationBtn"
             onPointerDown={onDurationPointerDown}
             onPointerMove={onDurationPointerMove}
             onPointerUp={onDurationPointerUp}
             onPointerCancel={onDurationPointerUp}
           >
-            <rect x={-pillW} y={-24} width={pillW} height={48} rx={10} className={styles.durationPill} />
-            <text x={-14} y={9} textAnchor="end" className={styles.durationLabelText}>
+            <rect x={-pillW} y={-24} width={pillW} height={48} rx={10} className="durationPill" />
+            <text x={-14} y={9} textAnchor="end" className="durationLabelText">
               {label}
             </text>
           </g>
@@ -368,14 +405,14 @@ function Grid() {
   const lines = [];
   for (let i = 0; i <= 10; i++) {
     const x = PAD + (i / 10) * (W - 2 * PAD);
-    const cls = i % 5 === 0 ? styles.gridLineMajor : styles.gridLine;
+    const cls = i % 5 === 0 ? "gridLineMajor" : "gridLine";
     lines.push(
       <line key={`gx${i}`} x1={x} y1={PAD} x2={x} y2={H - PAD} className={cls} />
     );
   }
   for (let i = 0; i <= 10; i++) {
     const y = PAD + (i / 10) * (H - 2 * PAD);
-    const cls = i % 5 === 0 ? styles.gridLineMajor : styles.gridLine;
+    const cls = i % 5 === 0 ? "gridLineMajor" : "gridLine";
     lines.push(
       <line key={`gy${i}`} x1={PAD} y1={y} x2={W - PAD} y2={y} className={cls} />
     );
@@ -390,7 +427,7 @@ function BoundsRect() {
       y={gyToSvg(1)}
       width={gxToSvg(1) - gxToSvg(0)}
       height={gyToSvg(0) - gyToSvg(1)}
-      className={styles.bounds}
+      className="bounds"
     />
   );
 }

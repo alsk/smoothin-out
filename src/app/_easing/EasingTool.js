@@ -9,7 +9,6 @@ import CodePanel from "./CodePanel";
 import { DEFAULT_ANCHORS, DEFAULT_ACTIVE_KEY, PRESETS } from "./presets";
 import { buildPathString, buildLinearCss, curveGoesBackward, sampleCurve } from "./bezier";
 import { useSavedCurves } from "./useSavedCurves";
-import styles from "./easing.module.css";
 
 const CubeScene = dynamic(() => import("./CubeScene"), { ssr: false });
 
@@ -105,47 +104,47 @@ export default function EasingTool() {
   }, [activeKey, saved]);
 
   return (
-    <div className={styles.shell}>
-      <div className={styles.wrap}>
-        <header className={styles.header}>
+    <div className="shell">
+      <div className="wrap">
+        <header className="header">
           <div>
-            <div className={styles.titleBlock}>
+            <div className="titleBlock">
               <h1>Smoothin-out</h1>
-              <div className={styles.headerPreview}>
+              <div className="headerPreview">
                 <CubeScene samplesRef={samplesRef} duration={duration} animStartRef={animStartRef} />
               </div>
             </div>
             <div>
-              <p className={styles.tagline}>
-                Drag handles. Click the curve to add a point. Double-click a point to remove.
+              <p className="tagline">
+                Drag handles. Click the curve to add a point. Double-click to remove.
               </p>
             </div>
           </div>
-          
-          <div className={styles.meta}>
-            <div className={styles.metaRow}>
-              <span className={styles.metaKey}>curve</span>
-              <span className={styles.metaVal}>{activeLabel}</span>
+
+          <div className="meta">
+            <div className="metaRow">
+              <span className="metaKey">curve</span>
+              <span className="metaVal">{activeLabel}</span>
             </div>
-            <div className={styles.metaRow}>
-              <span className={styles.metaKey}>anchors</span>
-              <span className={styles.metaVal}>{String(anchors.length).padStart(2, "0")}</span>
+            <div className="metaRow">
+              <span className="metaKey">anchors</span>
+              <span className="metaVal">{String(anchors.length).padStart(2, "0")}</span>
             </div>
-            <div className={styles.metaRow}>
-              <span className={styles.metaKey}>by</span>
-              <a href="https://x.com/_alexand_re" target="_blank" rel="noopener noreferrer" className={styles.metaLink}>@_alexand_re</a>
+            <div className="metaRow">
+              <span className="metaKey">by</span>
+              <a href="https://x.com/_alexand_re" target="_blank" rel="noopener noreferrer" className="metaLink">@_alexand_re</a>
             </div>
           </div>
         </header>
 
-        <div className={styles.layout}>
-          <div className={styles.left}>
-            <div className={styles.graphCard}>
+        <div className="layout">
+          <div className="left">
+            <div className="graphCard">
               <Graph anchors={anchors} setAnchors={handleSetAnchors} duration={duration} onDurationChange={setDuration} onWillChange={saveHistory} animStartRef={animStartRef} />
             </div>
           </div>
 
-          <div className={styles.right}>
+          <div className="right">
             <CodePanel pathString={pathString} linearCss={linearCss} linearGoesBackward={linearGoesBackward} />
             <SavedGrid
               saved={saved}

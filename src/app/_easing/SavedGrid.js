@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import CurveThumbnail from "./CurveThumbnail";
-import styles from "./easing.module.css";
 
 export default function SavedGrid({
   saved,
@@ -27,30 +26,33 @@ export default function SavedGrid({
   }, [newlyAddedId, onClearNewlyAdded]);
 
   return (
-    <div className={styles.savedSection}>
-      <div className={styles.savedHeader}>
-        <span className={styles.savedHeaderLabel}>
+    <div className="savedSection">
+      <div className="savedHeader">
+        <span className="savedHeaderLabel">
           Saved {saved.length > 0 ? `(${saved.length})` : ""}
         </span>
-        <div className={styles.savedHeaderActions}>
+        <div className="savedHeaderActions">
           {saved.length > 0 && (
-            <button type="button" className={styles.savedChipBtn} onClick={onExport}>
-               <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
-                <path d="M5.5 7.5V1.5M2.5 4 5.5 1 8.5 4M1 9.5h9" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-             
-              export
+            <button type="button" className="pushBtn savedChipBtn" onClick={onExport}>
+              <span className="pushFace">
+                <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
+                  <path d="M5.5 7.5V1.5M2.5 4 5.5 1 8.5 4M1 9.5h9" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                export
+              </span>
             </button>
           )}
           <button
             type="button"
-            className={styles.savedChipBtn}
+            className="pushBtn savedChipBtn"
             onClick={() => fileInputRef.current?.click()}
           >
-            <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
+            <span className="pushFace">
+              <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
                 <path d="M5.5 1v6M2.5 4.5 5.5 7.5 8.5 4.5M1 9.5h9" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
-            import
+              import
+            </span>
           </button>
           <input
             ref={fileInputRef}
@@ -63,19 +65,21 @@ export default function SavedGrid({
               e.target.value = "";
             }}
           />
-          <button type="button" className={styles.savedPrimaryBtn} onClick={onSave}>
-            <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-              <path d="M5 1v8M1 5h8" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
-            </svg>
-            save current curve
+          <button type="button" className="pushBtn savedPrimaryBtn" onClick={onSave}>
+            <span className="pushFace">
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+                <path d="M5 1v8M1 5h8" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
+              </svg>
+              save current curve
+            </span>
           </button>
         </div>
       </div>
 
       {saved.length === 0 ? (
-        <div className={styles.savedEmpty}>No saved curves yet</div>
+        <div className="savedEmpty">No saved curves yet</div>
       ) : (
-        <div className={styles.presetGrid}>
+        <div className="presetGrid">
           {saved.map((cell) => {
             const key = `saved.${cell.id}`;
             const isActive = key === activeKey;
@@ -141,11 +145,11 @@ function SavedCell({
       tabIndex={0}
       onClick={onCellClick}
       onKeyDown={onCellKeyDown}
-      className={`${styles.presetCell} ${styles.savedCell} ${isActive ? styles.presetCellActive : ""}`}
+      className={`presetCell savedCell ${isActive ? "presetCellActive" : ""}`}
     >
       <button
         type="button"
-        className={styles.savedDelete}
+        className="savedDelete"
         onClick={(e) => {
           e.stopPropagation();
           onDelete();
@@ -154,13 +158,13 @@ function SavedCell({
       >
         ×
       </button>
-      <div className={styles.presetThumb}>
+      <div className="presetThumb">
         <CurveThumbnail anchors={cell.anchors} />
       </div>
       {isEditing ? (
         <input
           ref={inputRef}
-          className={styles.savedNameInput}
+          className="savedNameInput"
           defaultValue={cell.name}
           onClick={(e) => e.stopPropagation()}
           onBlur={(e) => {
@@ -180,7 +184,7 @@ function SavedCell({
         />
       ) : (
         <span
-          className={styles.presetCellLabel}
+          className="presetCellLabel"
           onDoubleClick={(e) => {
             e.stopPropagation();
             onStartEdit();

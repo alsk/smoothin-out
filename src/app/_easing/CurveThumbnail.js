@@ -2,7 +2,6 @@
 
 import { useMemo } from "react";
 import { sampleCurve } from "./bezier";
-import styles from "./easing.module.css";
 
 const W = 100;
 const H = 100;
@@ -11,8 +10,8 @@ const PAD = 8;
 export default function CurveThumbnail({ anchors }) {
   const d = useMemo(() => buildThumbPath(anchors), [anchors]);
   return (
-    <svg viewBox={`0 0 ${W} ${H}`} className={styles.presetThumbSvg}>
-      <path d={d} className={styles.presetThumbPath} fill="none" />
+    <svg viewBox={`0 0 ${W} ${H}`} className="presetThumbSvg">
+      <path d={d} className="presetThumbPath" fill="none" />
     </svg>
   );
 }

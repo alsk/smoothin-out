@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import styles from "./easing.module.css";
 
 const PATH_DESC =
   "An SVG path string that traces the easing curve from (0,0) to (1,1). Used by animation tools that accept path-based custom easings.";
@@ -23,7 +22,7 @@ const CSS_USAGE = `.element {
 
 export default function CodePanel({ pathString, linearCss, linearGoesBackward }) {
   return (
-    <div className={styles.codeStack}>
+    <div className="codeStack">
       <CodeCell label="vector path" code={pathString} description={PATH_DESC} usage={PATH_USAGE} lang="js" />
       <CodeCell label="css linear()" code={linearCss} description={CSS_DESC} usage={CSS_USAGE} lang="css" showAlert={linearGoesBackward} />
     </div>
@@ -126,26 +125,26 @@ function CodeCell({ label, code, description, usage, showAlert, lang = 'js' }) {
   };
 
   return (
-    <div className={styles.codePanel}>
-      <div className={styles.codeHeader}>
-        <div className={styles.codeLabelRow} ref={infoRef}>
+    <div className="codePanel">
+      <div className="codeHeader">
+        <div className="codeLabelRow" ref={infoRef}>
           <span>{label}</span>
           <button
             type="button"
-            className={`${styles.infoBtn} ${infoOpen ? styles.infoBtnActive : ""}`}
+            className={`infoBtn ${infoOpen ? "infoBtnActive" : ""}`}
             onClick={() => { if (infoOpen) setInfoOpen(false); else { setInfoOpen(true); setAlertOpen(false); } }}
             aria-label="About this format"
             aria-expanded={infoOpen}
           >
             <InfoIcon />
           </button>
-          <div className={`${styles.infoPopup} ${infoOpen ? styles.infoPopupOpen : ""}`}>
-            <p className={styles.infoDesc}>{description}</p>
+          <div className={`infoPopup ${infoOpen ? "infoPopupOpen" : ""}`}>
+            <p className="infoDesc">{description}</p>
           </div>
           {showAlert && (
             <button
               type="button"
-              className={`${styles.alertBtn} ${alertOpen ? styles.alertBtnActive : ""}`}
+              className={`alertBtn ${alertOpen ? "alertBtnActive" : ""}`}
               onClick={() => { if (alertOpen) setAlertOpen(false); else { setAlertOpen(true); setInfoOpen(false); } }}
               aria-label="Why CSS linear() may be inaccurate"
               aria-expanded={alertOpen}
@@ -154,9 +153,9 @@ function CodeCell({ label, code, description, usage, showAlert, lang = 'js' }) {
             </button>
           )}
           {showAlert && (
-            <div className={`${styles.alertPopup} ${alertOpen ? styles.alertPopupOpen : ""}`}>
-              <p className={styles.infoDesc}>
-                CSS linear() is monotonic, meaning its values can't go backward in time. <span className={styles.alertHighlight}>Your curve reverses in X.</span> Use the vector path with GSAP CustomEase for backward-going curves.
+            <div className={`alertPopup ${alertOpen ? "alertPopupOpen" : ""}`}>
+              <p className="infoDesc">
+                CSS linear() is monotonic, meaning its values can't go backward in time. <span className="alertHighlight">Your curve reverses in X.</span> Use the vector path with GSAP CustomEase for backward-going curves.
               </p>
             </div>
           )}
@@ -164,24 +163,26 @@ function CodeCell({ label, code, description, usage, showAlert, lang = 'js' }) {
         <button
           type="button"
           onClick={copy}
-          className={`${styles.copyBlockBtn} ${copied ? styles.copyBlockBtnDone : ""}`}
+          className={`pushBtn copyBlockBtn ${copied ? "copyBlockBtnDone" : ""}`}
         >
-          {copied ? <CheckIcon /> : <ClipboardIcon />}
-          {copied ? "Copied!" : "Copy code"}
+          <span className="pushFace">
+            {copied ? <CheckIcon /> : <ClipboardIcon />}
+            {copied ? "Copied!" : "Copy code"}
+          </span>
         </button>
       </div>
-      <pre className={styles.codeBlock}>
+      <pre className="codeBlock">
         <code>{code}</code>
       </pre>
-      <div className={styles.usageDrawerWrap}>
+      <div className="usageDrawerWrap">
         <button
           type="button"
-          className={styles.howToBtn}
+          className="howToBtn"
           onClick={() => setHowToOpen((v) => !v)}
           aria-expanded={howToOpen}
         >
           <svg
-            className={`${styles.howToChevron} ${howToOpen ? styles.howToChevronOpen : ""}`}
+            className={`howToChevron ${howToOpen ? "howToChevronOpen" : ""}`}
             width="10" height="10" viewBox="0 0 10 10" fill="none"
             stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
             aria-hidden="true"
@@ -190,9 +191,9 @@ function CodeCell({ label, code, description, usage, showAlert, lang = 'js' }) {
           </svg>
           <span>How to integrate</span>
         </button>
-        <div className={`${styles.codeDrawer} ${howToOpen ? styles.codeDrawerOpen : ""}`}>
-          <div className={styles.codeDrawerInner}>
-            <pre className={styles.codeUsageBlock}>
+        <div className={`codeDrawer ${howToOpen ? "codeDrawerOpen" : ""}`}>
+          <div className="codeDrawerInner">
+            <pre className="codeUsageBlock">
               <SyntaxHighlight code={usage} lang={lang} />
             </pre>
           </div>

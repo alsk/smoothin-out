@@ -1,5 +1,6 @@
 import { Work_Sans, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import "./_easing/easing.css";
 
 const workSans = Work_Sans({
   variable: "--font-work-sans",

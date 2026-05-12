@@ -256,7 +256,7 @@ function formatLabel(name, variant) {
 
 // Order in which to flatten presets into a single grid.
 // Within each preset, prefer in → out → inOut.
-const VARIANT_ORDER = ["in", "out", "inOut", "soft", "default"];
+const VARIANT_ORDER = ["in", "inOut", "out", "soft", "default"];
 
 export function flattenPresets() {
   const out = [];
